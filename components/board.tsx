@@ -34,13 +34,24 @@ export default function Board() {
                   styles.col,
                   (i + j) % 2 == 0 ? styles.w : styles.b,
                   p && chess.turn() == c && styles.pointer,
-                  highlighted.includes(square) && styles.highlighted,
+                  highlighted.slice(1).includes(square) && styles.highlighted,
                 ].join(" ")}
                 key={`${i}, ${j}`}
                 onClick={() => {
-                  // @ts-ignore
-                  const mvs = chess.moves({ square, verbose: true }) as Move[];
-                  setHighlighted(mvs.map(({ to }) => to));
+                  if (highlighted.slice(1).includes(square)) {
+                    chess.move({ to: square, from: highlighted[0] });
+                    setPieces(getBoard());
+                    setHighlighted([]);
+                  } else if (p && chess.turn() == c) {
+                    const mvs = chess.moves({
+                      // @ts-ignore
+                      square,
+                      verbose: true,
+                    }) as Move[];
+                    setHighlighted([square, ...mvs.map(({ to }) => to)]);
+                  } else {
+                    setHighlighted([]);
+                  }
                 }}
               >
                 {p}
