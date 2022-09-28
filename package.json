@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "chess.js": "1.0.0-alpha.0",
     "next": "12.3.0",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "sass": "^1.55.0"
   },
   "devDependencies": {
+    "@types/chess.js": "^0.13.3",
     "@types/node": "18.7.18",
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",
