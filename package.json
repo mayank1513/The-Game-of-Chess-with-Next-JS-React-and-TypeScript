@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "chess-ai": "^0.0.2",
     "chess.js": "1.0.0-alpha.0",
     "next": "12.3.0",
     "react": "18.2.0",

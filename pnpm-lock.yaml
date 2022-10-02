@@ -5,6 +5,7 @@ specifiers:
   '@types/node': 18.7.18
   '@types/react': 18.0.20
   '@types/react-dom': 18.0.6
+  chess-ai: ^0.0.2
   chess.js: 1.0.0-alpha.0
   eslint: 8.23.1
   eslint-config-next: 12.3.0
@@ -15,6 +16,7 @@ specifiers:
   typescript: 4.8.3
 
 dependencies:
+  chess-ai: 0.0.2_chess.js@1.0.0-alpha.0
   chess.js: 1.0.0-alpha.0
   next: 12.3.0_2mygebwfgdyopr3fy2qddu2eli
   react: 18.2.0
@@ -491,6 +493,14 @@ packages:
       ansi-styles: 4.3.0
       supports-color: 7.2.0
     dev: true
+
+  /chess-ai/0.0.2_chess.js@1.0.0-alpha.0:
+    resolution: {integrity: sha512-i9T8DDWsB+PquSInMXdmQO3NAa0aACG0zxMO8pF79wdo8TWD9qHCzu1ONECW5pGVAoVrbT8e2ktft1QQ90sQJw==}
+    peerDependencies:
+      chess.js: ^0.13.4
+    dependencies:
+      chess.js: 1.0.0-alpha.0
+    dev: false
 
   /chess.js/1.0.0-alpha.0:
     resolution: {integrity: sha512-nwEDlNEOZR/FaKW1DZLYtjgJrtAlxBW/6Fp4Hk8QXqpCCLrXweOU6/vKfJ/jNHT2gPqasxi0/ZPslcWAAdzozg==}

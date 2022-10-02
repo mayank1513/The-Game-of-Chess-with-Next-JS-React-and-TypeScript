@@ -2,12 +2,13 @@
   width: 100vmin;
   height: 100vmin;
   margin: auto;
+  border: 1.5vmin ridge rgba(153, 205, 50, 0.658);
   .row {
     display: flex;
-    height: 12%;
+    height: 12.5%;
   }
   .col {
-    width: 12%;
+    width: 12.5%;
     color: red;
     font-size: 10vmin;
     display: flex;
