@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./board.module.scss";
 import { p0, pb, pw, chess, getBoard } from "utils/chess-utils";
 import { Move } from "chess.js";
@@ -9,11 +9,22 @@ export default function Board() {
   const [pieces, setPieces] = useState(
     new Array(8).fill(0).map(() => new Array(8).fill(""))
   );
+  const workerRef = useRef<Worker>();
   const [highlighted, setHighlighted] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
+    workerRef.current = new Worker(
+      new URL("../utils/worker.ts", import.meta.url)
+    );
+    workerRef.current.onmessage = (e: MessageEvent) => {
+      console.log("Hi from UI", e);
+    };
+    workerRef.current.postMessage("Hi -- from UI");
     initGame(chess, 2);
     setPieces(getBoard());
+    return () => {
+      workerRef.current?.terminate();
+    };
   }, []);
   return (
     <div className={styles.board}>
