@@ -1,0 +1,30 @@
+.loader {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background: #0009;
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  div {
+    width: 20vmin;
+    height: 20vmin;
+    border-radius: 50%;
+    background-color: skyblue;
+    animation: loading 1s infinite alternate;
+  }
+  @keyframes loading {
+    to {
+      transform: scale(1.5, 1.5);
+      opacity: 1;
+    }
+    from {
+      opacity: 0;
+      transform: scale(0.2, 0.2);
+    }
+  }
+}

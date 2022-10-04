@@ -3,12 +3,14 @@ import styles from "./board.module.scss";
 import { p0, pb, pw, chess, getBoard } from "utils/chess-utils";
 import { Move } from "chess.js";
 import { calculateBestMove, initGame } from "chess-ai";
+import Loader from "./loader";
 
 export default function Board() {
   const [pieces, setPieces] = useState(
     new Array(8).fill(0).map(() => new Array(8).fill(""))
   );
   const [highlighted, setHighlighted] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     initGame(chess, 2);
     setPieces(getBoard());
@@ -41,11 +43,17 @@ export default function Board() {
                 key={`${i}, ${j}`}
                 onClick={() => {
                   if (highlighted.slice(1).includes(square)) {
+                    // @ts-ignore
                     chess.move({ to: square, from: highlighted[0] });
-                    const aiMove = calculateBestMove();
-                    if (aiMove) chess.move(aiMove);
                     setPieces(getBoard());
-                    setHighlighted([]);
+                    setIsLoading(true);
+                    setTimeout(() => {
+                      const aiMove = calculateBestMove();
+                      if (aiMove) chess.move(aiMove);
+                      setPieces(getBoard());
+                      setHighlighted([]);
+                      setIsLoading(false);
+                    }, 0);
                   } else if (p && chess.turn() == c) {
                     const mvs = chess.moves({
                       // @ts-ignore
@@ -64,6 +72,7 @@ export default function Board() {
           })}
         </div>
       ))}
+      <Loader hidden={!isLoading} />
     </div>
   );
 }
