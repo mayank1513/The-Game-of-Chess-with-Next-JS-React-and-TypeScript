@@ -10,7 +10,7 @@ export default function Board() {
     new Array(8).fill(0).map(() => new Array(8).fill(""))
   );
   const workerRef = useRef<Worker>();
-  const [highlighted, setHighlighted] = useState<string[]>([]);
+  const [highlighted, setHighlighted] = useState<(string | undefined)[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   useEffect(() => {
     workerRef.current = new Worker(
@@ -49,7 +49,7 @@ export default function Board() {
                   styles.col,
                   (i + j) % 2 == 0 ? styles.w : styles.b,
                   p && chess.turn() == c && styles.pointer,
-                  highlighted.slice(1).includes(square) && styles.highlighted,
+                  highlighted.includes(square) && styles.highlighted,
                 ].join(" ")}
                 key={`${i}, ${j}`}
                 onClick={() => {
@@ -57,14 +57,17 @@ export default function Board() {
                     // @ts-ignore
                     chess.move({ to: square, from: highlighted[0] });
                     setPieces(getBoard());
+                    setHighlighted([square, highlighted[0]]);
                     setIsLoading(true);
                     setTimeout(() => {
                       const aiMove = calculateBestMove();
-                      if (aiMove) chess.move(aiMove);
-                      setPieces(getBoard());
-                      setHighlighted([]);
+                      if (aiMove) {
+                        const move = chess.move(aiMove);
+                        setPieces(getBoard());
+                        setHighlighted([move?.to, move?.from]);
+                      }
                       setIsLoading(false);
-                    }, 0);
+                    }, 200);
                   } else if (p && chess.turn() == c) {
                     const mvs = chess.moves({
                       // @ts-ignore
