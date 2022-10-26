@@ -12,6 +12,8 @@ export default function Board() {
   const workerRef = useRef<Worker>();
   const [highlighted, setHighlighted] = useState<(string | undefined)[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [color, setColor] = useState("b");
+  const [inCheck, setInCheck] = useState(false);
   useEffect(() => {
     workerRef.current = new Worker(
       new URL("../utils/worker.ts", import.meta.url)
@@ -20,14 +22,40 @@ export default function Board() {
       console.log("Hi from UI", e);
     };
     workerRef.current.postMessage("Hi -- from UI");
-    initGame(chess, 2);
+    initGame(chess, 1);
     setPieces(getBoard());
     return () => {
       workerRef.current?.terminate();
     };
   }, []);
+
+  function makeMove(mv: any, isAI: boolean) {
+    const move = chess.move(mv);
+    setPieces(getBoard());
+    setHighlighted([move?.to, move?.from]);
+    setIsLoading(!isAI);
+    setColor(move?.color || "w");
+    setInCheck(chess.inCheck());
+    if (chess.isGameOver()) {
+      setTimeout(() => {
+        alert("Game Over");
+        chess.reset();
+        setColor("b");
+        setInCheck(false);
+        setPieces(getBoard());
+        setHighlighted([]);
+        setIsLoading(false);
+      }, 100);
+    }
+  }
   return (
-    <div className={styles.board}>
+    <div
+      className={[
+        styles.board,
+        color == "w" ? styles.tb : styles.tw,
+        inCheck ? styles.inCheck : "",
+      ].join(" ")}
+    >
       {new Array(8).fill(0).map((_, i) => (
         <div className={styles.row} key={i}>
           {new Array(8).fill(0).map((_, j) => {
@@ -54,19 +82,17 @@ export default function Board() {
                 key={`${i}, ${j}`}
                 onClick={() => {
                   if (highlighted.slice(1).includes(square)) {
-                    // @ts-ignore
-                    chess.move({ to: square, from: highlighted[0] });
-                    setPieces(getBoard());
-                    setHighlighted([square, highlighted[0]]);
-                    setIsLoading(true);
+                    makeMove(
+                      {
+                        to: square,
+                        // @ts-ignore
+                        from: highlighted[0],
+                      },
+                      false
+                    );
                     setTimeout(() => {
                       const aiMove = calculateBestMove();
-                      if (aiMove) {
-                        const move = chess.move(aiMove);
-                        setPieces(getBoard());
-                        setHighlighted([move?.to, move?.from]);
-                      }
-                      setIsLoading(false);
+                      if (aiMove) makeMove(aiMove, true);
                     }, 200);
                   } else if (p && chess.turn() == c) {
                     const mvs = chess.moves({
