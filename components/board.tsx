@@ -14,6 +14,8 @@ export default function Board() {
   const [isLoading, setIsLoading] = useState(false);
   const [color, setColor] = useState("b");
   const [inCheck, setInCheck] = useState(false);
+  const [movesWithPromotion, setMovesWithPromotion] = useState<string[]>([]);
+  const isTwoPlayer = true;
   useEffect(() => {
     workerRef.current = new Worker(
       new URL("../utils/worker.ts", import.meta.url)
@@ -30,7 +32,10 @@ export default function Board() {
   }, []);
 
   function makeMove(mv: any, isAI: boolean) {
-    const move = chess.move(mv);
+    let move;
+    if (!isAI && movesWithPromotion.includes(mv.to)) {
+      chess.move({ ...mv, promotion: "q" });
+    } else move = chess.move(mv);
     setPieces(getBoard());
     setHighlighted([move?.to, move?.from]);
     setIsLoading(!isAI);
@@ -90,10 +95,13 @@ export default function Board() {
                       },
                       false
                     );
-                    setTimeout(() => {
-                      const aiMove = calculateBestMove();
-                      if (aiMove) makeMove(aiMove, true);
-                    }, 200);
+                    if (isTwoPlayer) {
+                      setIsLoading(false);
+                    } else
+                      setTimeout(() => {
+                        const aiMove = calculateBestMove();
+                        if (aiMove) makeMove(aiMove, true);
+                      }, 200);
                   } else if (p && chess.turn() == c) {
                     const mvs = chess.moves({
                       // @ts-ignore
@@ -101,6 +109,11 @@ export default function Board() {
                       verbose: true,
                     }) as Move[];
                     setHighlighted([square, ...mvs.map(({ to }) => to)]);
+                    setMovesWithPromotion(
+                      mvs
+                        .filter(({ flags }) => flags.includes("p"))
+                        .map(({ to }) => to)
+                    );
                   } else {
                     setHighlighted([]);
                   }
