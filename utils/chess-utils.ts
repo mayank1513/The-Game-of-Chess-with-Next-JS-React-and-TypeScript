@@ -5,6 +5,9 @@ export const pb = "♜♞♝♛♚♟";
 export const pw = "♖♘♗♕♔♙";
 export const chess = new Chess();
 
+export const files = "abcdefgh".split("");
+export const ranks = "87654321".split("");
+
 export const getBoard = () =>
   chess
     .ascii()
